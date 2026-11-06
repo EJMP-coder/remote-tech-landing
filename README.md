@@ -1,181 +1,136 @@
 # Remote Tech C.A. — Landing Page
 
-Landing page profesional con chatbot IA para Remote Tech C.A.
+Landing page profesional de Remote Tech C.A. · **https://remotetech.cc**
 
-**Stack:** React 18 + Vite · Node.js + Express · OpenAI GPT-4o-mini · Vercel
+**Stack:** React 18 + Vite · CSS Modules · PHP (formulario de contacto) · Hosting Spaceship
 
----
-
-## Requisitos previos
-
-- Node.js 18+ instalado
-- Cuenta en [OpenAI Platform](https://platform.openai.com) con API Key
-- Cuenta en [GitHub](https://github.com) y [Vercel](https://vercel.com) para deploy
+**Paleta:** Navy `#020B18` · Azul eléctrico `#0066FF` · Cyan `#00D4FF`
 
 ---
 
-## Instalación y ejecución local (Linux)
+## Requisitos
 
-### 1. Clonar / entrar al proyecto
+- Node.js 18+ (solo para desarrollar y compilar)
+- Hosting con PHP 7.4+ (Spaceship Web Hosting / cPanel) para el formulario
 
-```bash
-cd remote-tech-landing
-```
+---
 
-### 2. Instalar dependencias del frontend
+## Desarrollo local
 
 ```bash
 npm install
-```
-
-### 3. Configurar el backend
-
-```bash
-cd server
-npm install
-
-# Copiar el archivo de variables de entorno
-cp .env.example .env
-
-# Editar .env y poner tu API Key real
-nano .env
-```
-
-El archivo `.env` debe quedar así:
-
-```env
-OPENAI_API_KEY=sk-tu-api-key-real-aqui
-PORT=3001
-FRONTEND_URL=http://localhost:5173
-```
-
-### 4. Ejecutar en desarrollo (2 terminales)
-
-**Terminal 1 — Frontend:**
-```bash
-# Desde la raíz del proyecto
 npm run dev
 # → http://localhost:5173
 ```
 
-**Terminal 2 — Backend:**
+> El formulario de contacto usa `contact.php`, que solo funciona en un servidor
+> con PHP (Spaceship). En `npm run dev` el resto de la web funciona igual.
+
+---
+
+## Build de producción
+
 ```bash
-cd server
-npm run dev
-# → http://localhost:3001
+npm run build
 ```
 
-### 5. Verificar que todo funciona
+Genera la carpeta **`dist/`** con la web **prerenderizada** (el HTML ya contiene
+todo el contenido → mejor SEO y carga más rápida). Incluye:
 
-- Abre http://localhost:5173
-- Ve a la sección **Chatbot** y escribe un mensaje
-- Debes recibir respuesta del asistente IA
+| Archivo | Función |
+|---|---|
+| `index.html` | Página prerenderizada con SEO completo (meta, Open Graph, Schema.org) |
+| `assets/` | JS/CSS con hash (caché de 1 año) |
+| `contact.php` | Envía el formulario a **info@remotetech.cc** |
+| `.htaccess` | HTTPS, sin www, cabeceras de seguridad, caché, compresión |
+| `robots.txt` / `sitemap.xml` | Indexación en buscadores |
+| `favicon.svg`, `*.png`, `site.webmanifest` | Iconos y tarjeta para redes sociales |
+| `404.html` | Página de error personalizada |
+
+Para probar el build localmente: `npm run preview`.
+
+---
+
+## Publicar en Spaceship
+
+1. `npm run build`
+2. En Spaceship → **Hosting → cPanel → Administrador de archivos**, abre `public_html/`.
+3. Sube **todo el contenido** de `dist/` (no la carpeta en sí).
+   - Activa *"Mostrar archivos ocultos"* para verificar que `.htaccess` se subió.
+4. En cPanel → **SSL/TLS Status**, confirma que `remotetech.cc` tiene certificado activo
+   (AutoSSL). El `.htaccess` fuerza `https://remotetech.cc`.
+5. Crea el buzón **info@remotetech.cc** (Spacemail o Email del hosting) si aún no existe.
+6. Verifica en la zona DNS que existan los registros **SPF** y **DKIM** del hosting
+   (mejora la entrega y evita que los mensajes del formulario lleguen a spam).
+7. Prueba el formulario desde https://remotetech.cc/#contact.
+
+### Después de publicar (SEO)
+
+- Registra el sitio en **Google Search Console** y envía `https://remotetech.cc/sitemap.xml`.
+- Haz lo mismo en **Bing Webmaster Tools**.
+- Valida los datos estructurados en https://search.google.com/test/rich-results
+- Comprueba la tarjeta social en https://www.opengraph.xyz/
 
 ---
 
 ## Estructura del proyecto
 
 ```
-remote-tech-landing/
+remote-tech/
+├── public/                  ← se copia tal cual a dist/
+│   ├── .htaccess
+│   ├── contact.php          ← Envío de formulario (PHP mail)
+│   ├── robots.txt
+│   ├── sitemap.xml
+│   ├── site.webmanifest
+│   ├── 404.html / 404.css
+│   └── favicon.svg, og-image.png, icon-*.png
+├── scripts/
+│   └── prerender.js         ← Inserta el HTML renderizado en dist/index.html
 ├── src/
 │   ├── components/
-│   │   ├── Navbar/
-│   │   │   ├── Navbar.jsx
-│   │   │   └── Navbar.module.css
-│   │   ├── Hero/
-│   │   ├── About/
-│   │   ├── Services/
-│   │   ├── Values/
-│   │   ├── Technology/
-│   │   ├── Chatbot/         ← Conectado a OpenAI
-│   │   ├── Contact/
-│   │   └── Footer/
-│   ├── styles/
-│   │   └── global.css
+│   │   ├── Navbar/  Hero/  About/  Services/
+│   │   ├── Values/  Technology/  Contact/  Footer/
+│   ├── styles/global.css    ← Variables de color y tipografía
 │   ├── App.jsx
-│   └── main.jsx
-├── server/
-│   ├── index.js             ← API Express + OpenAI
-│   ├── package.json
-│   └── .env.example
-├── index.html
-├── vite.config.js           ← Proxy /api → localhost:3001
-├── vercel.json
+│   ├── main.jsx             ← Hidratación en cliente
+│   └── entry-server.jsx     ← Render para el prerender
+├── index.html               ← SEO: meta, Open Graph, Schema.org
+├── vite.config.js
 └── package.json
 ```
 
 ---
 
-## Build para producción
-
-```bash
-# Desde la raíz
-npm run build
-# Genera la carpeta /dist lista para deploy
-```
-
----
-
-## Deploy en Vercel
-
-### Paso 1 — Subir a GitHub
-
-```bash
-git init
-git add .
-git commit -m "feat: landing Remote Tech C.A."
-git remote add origin https://github.com/tu-usuario/remote-tech-landing.git
-git push -u origin main
-```
-
-### Paso 2 — Conectar con Vercel
-
-1. Entra a [vercel.com](https://vercel.com) → **New Project**
-2. Importa tu repositorio de GitHub
-3. Vercel detecta automáticamente el proyecto Vite
-
-### Paso 3 — Variables de entorno en Vercel
-
-En el panel de Vercel → **Settings → Environment Variables**, agrega:
-
-| Variable          | Valor                     |
-|-------------------|---------------------------|
-| `OPENAI_API_KEY`  | `sk-tu-api-key-real-aqui` |
-| `FRONTEND_URL`    | `https://tu-dominio.vercel.app` |
-
-### Paso 4 — Deploy
-
-Vercel desplegará automáticamente.  
-El chatbot funcionará en producción usando el backend serverless configurado en `vercel.json`.
-
----
-
 ## Personalización
 
-| Qué cambiar              | Dónde                                  |
-|--------------------------|----------------------------------------|
-| Teléfono WhatsApp        | `src/components/Contact/Contact.jsx`   |
-| Email de contacto        | `src/components/Contact/Contact.jsx`   |
-| Colores / tipografía     | `src/styles/global.css` (variables CSS)|
-| Personalidad del chatbot | `server/index.js` → `SYSTEM_PROMPT`    |
-| Servicios                | `src/components/Services/Services.jsx` |
-| Tecnologías              | `src/components/Technology/Technology.jsx` |
+| Qué cambiar | Dónde |
+|---|---|
+| Colores / tipografía | `src/styles/global.css` (variables CSS) |
+| Email que recibe el formulario | `public/contact.php` → `TO_EMAIL` |
+| Email mostrado en la web | `src/components/Contact/Contact.jsx` → `EMAIL` |
+| Límite de envíos por IP | `public/contact.php` → `RATE_LIMIT_MAX` |
+| Servicios | `src/components/Services/Services.jsx` |
+| Tecnologías | `src/components/Technology/Technology.jsx` |
+| Textos SEO | `index.html` |
 
 ---
 
 ## Seguridad implementada
 
-- ✅ API Key de OpenAI solo en el backend (nunca expuesta al cliente)
-- ✅ Rate limiting: máximo 20 requests/minuto por IP
-- ✅ Sanitización y límite de longitud en mensajes
-- ✅ CORS configurado por dominio
-- ✅ `.env` en `.gitignore` (nunca sube a Git)
-- ✅ Historial de chat limitado a 40 mensajes
+- ✅ Sin claves ni API keys en el proyecto
+- ✅ Formulario: solo POST, solo desde `remotetech.cc`, honeypot anti-bots,
+  límite de 5 envíos/hora por IP, validación estricta y protección contra
+  inyección de cabeceras de correo
+- ✅ Cabeceras: CSP estricta, HSTS, X-Frame-Options, nosniff, Referrer-Policy,
+  Permissions-Policy
+- ✅ HTTPS forzado y dominio canónico sin `www`
+- ✅ Bloqueo de archivos ocultos/sensibles y listado de directorios desactivado
+- ✅ Sin sourcemaps en producción
 
 ---
 
 ## Contacto
 
-Remote Tech C.A. · Caracas, Venezuela  
-📱 +58 414 135 7471  
-📧 erick.erc@gmail.com
+Remote Tech C.A. · Caracas, Venezuela
+📧 info@remotetech.cc

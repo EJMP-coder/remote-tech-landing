@@ -39,9 +39,9 @@
   white-space: nowrap;
   transition: color var(--transition);
 }
-.marqueeItem:hover { color: var(--white); }
+.marqueeItem:hover { color: var(--cyan); }
 
-.dot { color: var(--green); font-size: 0.5rem; vertical-align: middle; }
+.dot { color: var(--cyan); font-size: 0.5rem; vertical-align: middle; }
 
 @keyframes marquee {
   from { transform: translateX(0); }
@@ -73,7 +73,7 @@
 
 .icon {
   font-size: 1.5rem;
-  color: var(--green);
+  color: var(--cyan);
   display: block;
   margin-bottom: 0.25rem;
 }

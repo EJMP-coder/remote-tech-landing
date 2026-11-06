@@ -28,7 +28,7 @@
   font-weight: 300;
   line-height: 1.7;
   max-width: 440px;
-  border-left: 2px solid var(--green);
+  border-left: 2px solid var(--cyan);
   padding-left: 1.5rem;
   align-self: end;
 }
@@ -48,12 +48,12 @@
   transition: background var(--transition);
 }
 .row:last-child { border-bottom: 1px solid var(--gray-3); }
-.row:hover { background: rgba(255,255,255,0.02); }
+.row:hover { background: rgba(0, 102, 255, 0.05); }
 
 .rowNum {
   font-family: var(--font-display);
   font-size: 0.85rem;
-  color: var(--green);
+  color: var(--cyan);
   padding-top: 4px;
 }
 

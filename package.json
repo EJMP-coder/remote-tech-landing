@@ -1,20 +1,24 @@
 {
   "name": "remote-tech-landing",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-ssr && node scripts/prerender.js && node scripts/postbuild.js",
+    "deploy": "npm run build && bash scripts/deploy.sh",
+    "check": "node scripts/post-deploy-check.mjs https://remotetech.cc",
+    "check:local": "node scripts/post-deploy-check.mjs dist",
     "preview": "vite preview"
   },
   "dependencies": {
+    "lucide-react": "^0.383.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "lucide-react": "^0.383.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
+    "sharp": "^0.33.5",
     "vite": "^5.2.0"
   }
 }

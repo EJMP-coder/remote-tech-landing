@@ -1,0 +1,78 @@
+# ═══════════════════════════════════════════════════════════════════
+#  Remote Tech C.A. — remotetech.cc  (Spaceship · Apache / LiteSpeed)
+# ═══════════════════════════════════════════════════════════════════
+
+Options -Indexes -MultiViews
+DirectoryIndex index.html
+ServerSignature Off
+AddDefaultCharset UTF-8
+ErrorDocument 404 /404.html
+
+# ── Redirecciones: HTTPS + dominio sin www ───────────────────────────
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # www.remotetech.cc → remotetech.cc
+  RewriteCond %{HTTP_HOST} ^www\.remotetech\.cc$ [NC]
+  RewriteRule ^ https://remotetech.cc%{REQUEST_URI} [L,R=301,NE]
+
+  # http → https (solo en el dominio real, no afecta pruebas locales)
+  RewriteCond %{HTTP_HOST} ^remotetech\.cc$ [NC]
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://remotetech.cc%{REQUEST_URI} [L,R=301,NE]
+
+  # /index.html → /  (evita contenido duplicado)
+  RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
+  RewriteRule ^index\.html$ / [L,R=301]
+
+  # Bloquear archivos ocultos (.env, .git, etc.), excepto .well-known (SSL)
+  RewriteRule (^|/)\.(?!well-known/) - [F,L]
+</IfModule>
+
+# Bloquear archivos sensibles por extensión
+<FilesMatch "(?i)\.(env|ini|log|sh|sql|bak|old|orig|swp|dist|lock|md|json)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+</FilesMatch>
+
+# ── Cabeceras de seguridad ───────────────────────────────────────────
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://formsubmit.co; form-action 'self' https://formsubmit.co; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; manifest-src 'self'; upgrade-insecure-requests"
+  Header always unset X-Powered-By
+  Header unset X-Powered-By
+
+  # Caché: HTML siempre fresco; assets con hash de Vite → inmutables 1 año
+  <FilesMatch "\.(html|php)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "-[A-Za-z0-9_-]{8}\.(js|css)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(png|jpe?g|webp|avif|svg|ico|woff2?)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\.(xml|txt|webmanifest)$">
+    Header set Cache-Control "public, max-age=86400"
+  </FilesMatch>
+</IfModule>
+
+# ── Tipos MIME ───────────────────────────────────────────────────────
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+  AddType image/svg+xml .svg
+  AddType text/javascript .js .mjs
+  AddType font/woff2 .woff2
+</IfModule>
+
+# ── Compresión ───────────────────────────────────────────────────────
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml text/javascript application/javascript application/json application/xml application/manifest+json image/svg+xml
+</IfModule>

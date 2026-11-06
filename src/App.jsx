@@ -4,7 +4,6 @@ import About     from './components/About/About.jsx'
 import Services  from './components/Services/Services.jsx'
 import Values    from './components/Values/Values.jsx'
 import Technology from './components/Technology/Technology.jsx'
-import Chatbot   from './components/Chatbot/Chatbot.jsx'
 import Contact   from './components/Contact/Contact.jsx'
 import Footer    from './components/Footer/Footer.jsx'
 
@@ -18,7 +17,6 @@ export default function App() {
         <Services />
         <Values />
         <Technology />
-        <Chatbot />
         <Contact />
       </main>
       <Footer />

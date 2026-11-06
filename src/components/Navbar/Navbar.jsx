@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import styles from './Navbar.module.css'
+import Logo from '../Logo/Logo'
 
 const links = [
   { label: 'Inicio',         href: '#hero' },
@@ -7,8 +8,6 @@ const links = [
   { label: 'Servicios',      href: '#services' },
   { label: 'Valores',        href: '#values' },
   { label: 'Tecnología',     href: '#technology' },
-  { label: 'Chatbot',        href: '#chatbot' },
-  { label: 'Contacto',       href: '#contact' },
 ]
 
 export default function Navbar() {
@@ -17,7 +16,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -26,25 +25,33 @@ export default function Navbar() {
   return (
     <header className={`${styles.navbar} ${scrolled ? styles.scrolled : ''}`}>
       <div className={`container ${styles.inner}`}>
-        <a href="#hero" className={styles.logo} onClick={close}>
-          REMOTE<span>TECH</span>
+        <a href="#hero" className={styles.logo} onClick={close} aria-label="Remote Tech C.A. — Inicio">
+          <Logo className={styles.logoMark} />
         </a>
 
-        <nav className={`${styles.nav} ${menuOpen ? styles.open : ''}`}>
+        <nav
+          id="main-nav"
+          aria-label="Navegación principal"
+          className={`${styles.nav} ${menuOpen ? styles.open : ''}`}
+        >
           {links.map(l => (
             <a key={l.href} href={l.href} className={styles.link} onClick={close}>
               {l.label}
             </a>
           ))}
-          <a href="#contact" className={styles.cta} onClick={close}>
+          {/* Único acceso a la sección de contacto desde el menú */}
+          <a id="nav-cta-contact" href="#contact" className={styles.cta} onClick={close}>
             Contáctanos
           </a>
         </nav>
 
         <button
+          type="button"
           className={`${styles.burger} ${menuOpen ? styles.active : ''}`}
           onClick={() => setMenuOpen(v => !v)}
           aria-label="Menú"
+          aria-expanded={menuOpen}
+          aria-controls="main-nav"
         >
           <span /><span /><span />
         </button>

@@ -49,11 +49,11 @@
   transition: border-color var(--transition), color var(--transition), background var(--transition);
 }
 .channelBtn:hover {
-  border-color: var(--gray-4);
+  border-color: var(--blue);
   color: var(--white);
   background: var(--gray-2);
 }
-.channelBtn svg { flex-shrink: 0; color: var(--green); }
+.channelBtn svg { flex-shrink: 0; color: var(--cyan); }
 
 .channelInfo {
   display: flex;
@@ -103,11 +103,21 @@
 .input:focus,
 .textarea:focus {
   outline: none;
-  border-color: var(--gray-5);
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.12);
 }
 .input::placeholder,
 .textarea::placeholder { color: var(--gray-4); }
 .textarea { resize: vertical; min-height: 120px; }
+
+/* Honeypot anti-spam (oculto visualmente y para lectores de pantalla) */
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
 
 .errorMsg {
   font-size: 0.8rem;
@@ -120,8 +130,8 @@
   justify-content: center;
   gap: 8px;
   padding: 0.9rem 2rem;
-  background: var(--white);
-  color: var(--black);
+  background: var(--gradient);
+  color: var(--white);
   font-family: var(--font-body);
   font-size: 0.8rem;
   font-weight: 500;
@@ -130,10 +140,11 @@
   border: none;
   border-radius: var(--radius);
   cursor: pointer;
-  transition: opacity var(--transition), transform var(--transition);
+  transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
   align-self: flex-start;
 }
-.submitBtn:hover { opacity: 0.85; transform: translateY(-1px); }
+.submitBtn:hover { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 8px 28px rgba(0, 102, 255, 0.35); }
+.submitBtn:disabled { opacity: 0.6; cursor: wait; transform: none; box-shadow: none; }
 
 /* ── Success ── */
 .successMsg {
@@ -149,7 +160,7 @@
 }
 .successIcon {
   font-size: 2rem;
-  color: var(--green);
+  color: var(--cyan);
   display: block;
 }
 .successMsg h3 {
@@ -175,7 +186,7 @@
   cursor: pointer;
   transition: border-color var(--transition), color var(--transition);
 }
-.resetBtn:hover { border-color: var(--white); color: var(--white); }
+.resetBtn:hover { border-color: var(--cyan); color: var(--cyan); }
 
 @media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; gap: 3rem; }

@@ -7,7 +7,8 @@
 }
 
 .navbar.scrolled {
-  background: rgba(10, 10, 10, 0.92);
+  background: rgba(2, 11, 24, 0.88);
+  -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   border-color: var(--gray-3);
 }
@@ -20,12 +21,23 @@
 }
 
 .logo {
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  letter-spacing: 0.08em;
-  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
 }
-.logo span { color: var(--green); }
+.logoMark {
+  height: 50px;
+  width: auto;
+  display: block;
+  transition: transform var(--transition), filter var(--transition);
+}
+.logo:hover .logoMark {
+  transform: translateY(-1px);
+  filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.35));
+}
+@media (max-width: 480px) {
+  .logoMark { height: 42px; }
+}
 
 .nav {
   display: flex;
@@ -41,7 +53,7 @@
   transition: color var(--transition);
   text-transform: uppercase;
 }
-.link:hover { color: var(--white); }
+.link:hover { color: var(--cyan); }
 
 .cta {
   font-size: 0.75rem;
@@ -49,14 +61,15 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 0.5rem 1.25rem;
-  border: 1px solid var(--white);
+  border: 1px solid var(--blue);
   color: var(--white);
   border-radius: var(--radius);
-  transition: background var(--transition), color var(--transition);
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
 }
 .cta:hover {
-  background: var(--white);
-  color: var(--black);
+  background: var(--blue);
+  border-color: var(--blue);
+  color: var(--white);
 }
 
 /* ── Hamburger ── */
